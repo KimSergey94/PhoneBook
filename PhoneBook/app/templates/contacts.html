@@ -1,0 +1,43 @@
+﻿<h2>Contacts</h2>
+<a href="#/addcontact" class="btn btn-primary">Create a new contact</a>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        List Contacts
+    </div>
+    <div class="panel-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Patronymic</th>
+                    <th>Email</th>
+                    <th>Number</th>
+                    <th>Note</th>
+                    <th>#</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="i in contacts">
+                    <td>{{i.Id}}</td>
+                    <td>{{i.FirstName}}</td>
+                    <td>{{i.LastName}}</td>
+                    <td>{{i.Patronymic}}</td>
+                    <td>{{i.Email}}</td>
+                    <td>{{i.Number}}</td>
+                    <td>{{i.Note}}</td>
+                    <td>
+                        <a href="#/edituser/{{i.Id}}">Edit</a> |
+                        <a href="" ng-click="deleteContact(i.Id)">Delete</a>
+                    </td>
+                </tr>
+                <tr ng-if="!contacts || contacts.length == 0">
+                    <td colspan="8" style="text-align: center">
+                        No contacts to display
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
