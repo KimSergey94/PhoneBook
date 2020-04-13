@@ -1,4 +1,5 @@
-﻿using PhoneBook.Models;
+﻿using Newtonsoft.Json;
+using PhoneBook.Models;
 using PhoneBook.Models.EF;
 using PhoneBook.Utils;
 using System.Collections.Generic;
@@ -31,6 +32,16 @@ namespace PhoneBook.Controllers
                 contactVMs.Add(MapperUtil.MapToContactVM(item));
             }
 
+            //JsonSerializerSettings settings = new JsonSerializerSettings
+            //{
+            //    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            //    Formatting = Formatting.None
+            //    //PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+            //    //Formatting = Formatting.Indented
+            //};
+            //string json = JsonConvert.SerializeObject(contacts, settings);
+            //return Json(json, JsonRequestBehavior.AllowGet);
+
             return Json(contactVMs, JsonRequestBehavior.AllowGet);
         }
 
@@ -41,15 +52,16 @@ namespace PhoneBook.Controllers
         }
 
         [HttpPost]
-        public JsonResult Create(Contact contact)
+        public JsonResult Create(ContactVM contactVM)
         {
+            Contact contact = MapperUtil.MapToContact(contactVM);
             db.Contacts.Add(contact);
             db.SaveChanges();
             return Json(null);
         }
 
         [HttpPost]
-        public JsonResult Edit(Contact contact)
+        public JsonResult Edit(ContactVM contact)
         {
             db.Entry(contact).State = System.Data.Entity.EntityState.Modified;
             db.SaveChanges();

@@ -22,3 +22,7 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.table tbody > tr > td, .table thead > tr > th {
+    text-align: center;
+}

@@ -25,10 +25,10 @@
                     <td>{{i.LastName}}</td>
                     <td>{{i.Patronymic}}</td>
                     <td>{{i.Email}}</td>
-                    <td>{{i.Number}}</td>
+                    <td style="white-space:pre">{{i.Number}}</td>
                     <td>{{i.Note}}</td>
                     <td>
-                        <a href="#/edituser/{{i.Id}}">Edit</a> |
+                        <a href="#/editcontact/{{i.Id}}">Edit</a> |
                         <a href="" ng-click="deleteContact(i.Id)">Delete</a>
                     </td>
                 </tr>
@@ -41,3 +41,5 @@
         </table>
     </div>
 </div>
+
+<!--replace("/;;;/g","\n")-->

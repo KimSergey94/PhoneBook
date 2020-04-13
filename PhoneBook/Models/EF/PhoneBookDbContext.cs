@@ -26,7 +26,7 @@ namespace PhoneBook.Models.EF
         public DbSet<Note> Notes { get; set; }
     }
 
-    public class PhoneBookDbInitializer : DropCreateDatabaseAlways<PhoneBookDbContext>
+    public class PhoneBookDbInitializer : DropCreateDatabaseIfModelChanges<PhoneBookDbContext>
     {
         protected override void Seed(PhoneBookDbContext context)
         {

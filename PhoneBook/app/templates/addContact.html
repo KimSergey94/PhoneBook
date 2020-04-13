@@ -1,0 +1,48 @@
+﻿<h2>Create</h2>
+<form class="form-horizontal" ng-submit="createContact(contact)">
+    <h4>Create a new user</h4>
+    <hr />
+
+    <div class="form-group">
+        <label class="col-lg-2 control-label">First Name</label>
+        <div class="col-lg-10">
+            <input type="text" class="form-control" ng-model="contact.FirstName" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-2 control-label">Last Name</label>
+        <div class="col-lg-10">
+            <input type="text" class="form-control" ng-model="contact.LastName" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-2 control-label">Patronymic</label>
+        <div class="col-lg-10">
+            <input type="text" class="form-control" ng-model="contact.Patronymic" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-2 control-label">Email</label>
+        <div class="col-lg-10">
+            <input type="email" class="form-control" ng-model="contact.Email" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-2 control-label">Number</label>
+        <div class="col-lg-10">
+            <input type="text" class="form-control" ng-model="contact.Number" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-2 control-label">Note</label>
+        <div class="col-lg-10">
+            <input type="text" class="form-control" ng-model="contact.Note" />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-lg-offset-2 col-lg-10">
+            <input type="submit" class="btn btn-success" value="Create" />
+            <a href="#/" class="btn btn-default">Cancel</a>
+        </div>
+    </div>
+</form>

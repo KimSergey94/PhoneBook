@@ -2,16 +2,24 @@
     'use strict';
 
     angular.
-        module('phoneBook', [
+        module('phonebook', [
             'ngRoute'
-        ]).
-        config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
+        ])
+        .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
             $locationProvider.hashPrefix('');
 
-            $routeProvider.
-                when('/', {
+            $routeProvider
+                .when('/', {
                     controller: 'contactsCtrl',
-                    templateURL: '/app/templates/contacts.html'
+                    templateUrl: '/app/templates/contacts.html'
+                })
+                .when('/addcontact', {
+                    controller: 'addContactCtrl',
+                    templateUrl: '/app/templates/addContact.html'
+                })
+                .when('/editcontact/:id', {
+                    controller: 'editContactCtrl',
+                    templateUrl: '/app/templates/editContact.html'
                 })
                 .otherwise({ redirectTo: '/' });
         }]);
