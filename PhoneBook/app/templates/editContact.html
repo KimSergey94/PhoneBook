@@ -3,6 +3,9 @@
     <h4>Update the current user</h4>
     <hr />
 
+    <input type="hidden" id="notesNum" />
+    <input type="hidden" id="numbersNum" />
+
     <div class="form-group">
         <label class="col-lg-2 control-label">First Name</label>
         <div class="col-lg-10">
@@ -29,16 +32,15 @@
     </div>
     <div class="form-group">
         <label class="col-lg-2 control-label">Number</label>
-        <div class="col-lg-10">
-            <input type="text" class="form-control" ng-model="contact.Number" />
-        </div>
+        <a href="" ng-click="addNumberField()">Add new number</a>
+        <div class="col-lg-10" id="numberDiv">  </div>
     </div>
     <div class="form-group">
         <label class="col-lg-2 control-label">Note</label>
-        <div class="col-lg-10">
-            <input type="text" class="form-control" ng-model="contact.Note" />
-        </div>
+        <a href="" ng-click="addNoteField()">Add new note</a>
+        <div class="col-lg-10" id="noteDiv">    </div>
     </div>
+
     <div class="form-group">
         <div class="col-lg-offset-2 col-lg-10">
             <input type="submit" class="btn btn-success" value="Update" />

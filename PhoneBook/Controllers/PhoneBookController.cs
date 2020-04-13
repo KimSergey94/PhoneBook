@@ -32,16 +32,6 @@ namespace PhoneBook.Controllers
                 contactVMs.Add(MapperUtil.MapToContactVM(item));
             }
 
-            //JsonSerializerSettings settings = new JsonSerializerSettings
-            //{
-            //    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            //    Formatting = Formatting.None
-            //    //PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-            //    //Formatting = Formatting.Indented
-            //};
-            //string json = JsonConvert.SerializeObject(contacts, settings);
-            //return Json(json, JsonRequestBehavior.AllowGet);
-
             return Json(contactVMs, JsonRequestBehavior.AllowGet);
         }
 
@@ -49,6 +39,32 @@ namespace PhoneBook.Controllers
         {
             var contact = db.Contacts.Find(id);
             return Json(contact, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult GetPhoneNumbers(int id)
+        {
+            var contact = db.Contacts.Find(id);
+            db.Entry(contact).Collection(x => x.PhoneNumber).Load();
+            List<string> numbers = new List<string>();
+            foreach (var item in contact.PhoneNumber)
+            {
+                numbers.Add(item.Number);
+            }
+            return Json(numbers, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult GetNotes(int id)
+        {
+            var contact = db.Contacts.Find(id);
+            db.Entry(contact).Collection(x => x.Note).Load();
+            List<string> notes = new List<string>();
+            foreach (var item in contact.Note)
+            {
+                notes.Add(item.NoteText);
+            }
+            return Json(notes, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -61,8 +77,10 @@ namespace PhoneBook.Controllers
         }
 
         [HttpPost]
-        public JsonResult Edit(ContactVM contact)
+        public JsonResult Edit(Contact contact)
         {
+            //var contact = db.Contacts.Find(contactVM.Id);
+            //contact = MapperUtil.MapToContact(contactVM);
             db.Entry(contact).State = System.Data.Entity.EntityState.Modified;
             db.SaveChanges();
             return Json(null);
@@ -71,8 +89,8 @@ namespace PhoneBook.Controllers
         [HttpPost]
         public JsonResult Delete(int id)
         {
-            var user = db.Contacts.Find(id);
-            db.Contacts.Remove(user);
+            var contact = db.Contacts.Find(id);
+            db.Contacts.Remove(contact);
             db.SaveChanges();
             return Json(null);
         }

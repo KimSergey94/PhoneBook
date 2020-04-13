@@ -43,8 +43,8 @@ namespace PhoneBook.Utils
                 //        ? src.Note.Aggregate((i, j) => new Note { NoteText = (i.NoteText + "; " + j.NoteText) }).NoteText
                 //        : "-"))
                 ).CreateMapper().Map<ContactVM, Contact>(contact);
-            result.PhoneNumber = new List<PhoneNumber>() { new PhoneNumber { Number = contact.Number } };
-            result.Note = new List<Note>() { new Note { NoteText = contact.Note } };
+            //result.PhoneNumber = new List<PhoneNumber>() { new PhoneNumber { Number = contact.Number } };
+            //result.Note = new List<Note>() { new Note { NoteText = contact.Note } };
             return result;
         }
 
