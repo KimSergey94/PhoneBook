@@ -5,7 +5,6 @@
         .module('phonebook')
         .controller('contactsCtrl', ['$scope', 'dataService', function ($scope, dataService) {
             $scope.contacts = [];
-
             getData();
 
             function getData() {
@@ -29,13 +28,38 @@
             };
         }])
         .controller('addContactCtrl', ['$scope', '$location', 'dataService', function ($scope, $location, dataService) {
+            $scope.lastContactId;
             $scope.createContact = function (contact) {
-                dataService.addContact(contact).then(function () {
+                dataService.addContact(contact).then(function (result) {
+                    $scope.notes = [];
+                    $scope.numbers = [];
+                    $scope.lastContactId = result;
+                    fetchNumbersNNotes();
+                    for (var i = 0; i < $scope.numbers.length; i++) {
+                        dataService.addNumber($scope.lastContactId,
+                            document.getElementById('numberEl' + (parseInt(i, 10) + 1)).value);
+                    }
+                    for (var i = 0; i < $scope.notes.length; i++) {
+                        dataService.addNote($scope.lastContactId,
+                            document.getElementById('noteEl' + (parseInt(i, 10) + 1)).value);
+                    };
                     toastr.success('Contact is created successfully.');
                     $location.path('/');
                 }, function () {
                     toastr.error('Error during the contact creation.');
-                });
+                    });
+            };
+            $scope.addNumberField = function () {
+                dataService.addNumberField();
+            };
+            $scope.addNoteField = function () {
+                dataService.addNoteField();
+            };
+            function fetchNumbersNNotes() {
+                var numbers = document.getElementsByClassName('numberEl');
+                var notes = document.getElementsByClassName('noteEl');
+                $scope.numbers = Array.from(numbers).map((elem => elem));
+                $scope.notes = Array.from(notes).map((elem => elem));
             };
         }])
         .controller('editContactCtrl', ['$scope', '$routeParams', '$location', 'dataService',
@@ -54,26 +78,32 @@
                     $scope.notes = result;
                     var notesNum = document.getElementById('notesNum');
                     notesNum.value = $scope.notes.length;
-                    for (var i = 0; i < $scope.notes.length; i++) {
+                    for (var i = 1; i < $scope.notes.length+1; i++) {
                         var node = document.createElement("input");
                         node.className = "form-control noteEl";
                         node.id = "noteEl" + i;
                         document.getElementById('noteDiv').appendChild(node);
-                        node.value = $scope.notes[i];
+                        node.value = $scope.notes[i-1];
                     }
                 });
                 dataService.getNumbers($routeParams.id).then(function (result) {
                     $scope.numbers = result;
                     var numbersNum = document.getElementById('numbersNum');
-                    numbersNum .value = $scope.notes.length;
-                    for (var i = 0; i < $scope.numbers.length; i++) {
+                    numbersNum.value = $scope.numbers.length;
+                    for (var i = 1; i < $scope.numbers.length+1; i++) {
                         var node = document.createElement("input");
                         node.className = "form-control numberEl";
                         node.id = "numberEl" + i;
                         document.getElementById('numberDiv').appendChild(node);
-                        node.value = $scope.numbers[i];
+                        node.value = $scope.numbers[i-1];
                     }
                 });
+                $scope.addNumberField = function () {
+                    dataService.addNumberField();
+                };
+                $scope.addNoteField = function () {
+                    dataService.addNoteField();
+                };
 
                 $scope.updateContact = function (contact) {
                     dataService.editContact(contact).then(function () {

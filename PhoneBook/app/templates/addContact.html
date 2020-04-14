@@ -1,7 +1,11 @@
 ﻿<h2>Create</h2>
-<form class="form-horizontal" ng-submit="createContact(contact)">
+<form class="form-horizontal" ng-submit="createContact(contact);">
     <h4>Create a new user</h4>
     <hr />
+
+    <input type="hidden" id="contactId" />
+    <input type="hidden" id="notesNum" value="0" />
+    <input type="hidden" id="numbersNum" value="1" />
 
     <div class="form-group">
         <label class="col-lg-2 control-label">First Name</label>
@@ -29,16 +33,18 @@
     </div>
     <div class="form-group">
         <label class="col-lg-2 control-label">Number</label>
-        <div class="col-lg-10">
-            <input type="text" class="form-control" ng-model="contact.Number" />
+        <a href="" ng-click="addNumberField()">Add new number</a>
+        <div class="col-lg-10" id="numberDiv">
+            <input type="text" class="form-control numberEl" id="numberEl1" />
         </div>
     </div>
     <div class="form-group">
         <label class="col-lg-2 control-label">Note</label>
-        <div class="col-lg-10">
-            <input type="text" class="form-control" ng-model="contact.Note" />
+        <a href="" ng-click="addNoteField()">Add new note</a>
+        <div class="col-lg-10" id="noteDiv">
         </div>
     </div>
+
     <div class="form-group">
         <div class="col-lg-offset-2 col-lg-10">
             <input type="submit" class="btn btn-success" value="Create" />

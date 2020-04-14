@@ -3,6 +3,7 @@ using PhoneBook.Models;
 using PhoneBook.Models.EF;
 using PhoneBook.Utils;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace PhoneBook.Controllers
@@ -10,6 +11,7 @@ namespace PhoneBook.Controllers
     public class PhoneBookController : Controller
     {
         private PhoneBookDbContext db = null;
+        private int lastContactId;
 
         public PhoneBookController()
         {
@@ -72,6 +74,33 @@ namespace PhoneBook.Controllers
         {
             Contact contact = MapperUtil.MapToContact(contactVM);
             db.Contacts.Add(contact);
+            db.SaveChanges();
+            lastContactId = db.Contacts.Max(item => item.Id);
+            return Json(lastContactId, JsonRequestBehavior.AllowGet);
+        }
+        public int GetLastContactId()
+        {
+            return lastContactId;
+        }
+
+        [HttpPost]
+        public JsonResult AddNumber(int contactId, string number)
+        {
+            PhoneNumber phoneNumber = new PhoneNumber();
+            phoneNumber.ContactId = contactId;
+            phoneNumber.Number = number;
+            db.PhoneNumbers.Add(phoneNumber);
+            db.SaveChanges();
+            return Json(null);
+        }
+
+        [HttpPost]
+        public JsonResult AddNote(int contactId, string noteText)
+        {
+            Note note = new Note();
+            note.ContactId = contactId; 
+            note.NoteText = noteText;
+            db.Notes.Add(note);
             db.SaveChanges();
             return Json(null);
         }
