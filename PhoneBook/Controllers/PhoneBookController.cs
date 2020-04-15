@@ -78,10 +78,6 @@ namespace PhoneBook.Controllers
             lastContactId = db.Contacts.Max(item => item.Id);
             return Json(lastContactId, JsonRequestBehavior.AllowGet);
         }
-        public int GetLastContactId()
-        {
-            return lastContactId;
-        }
 
         [HttpPost]
         public JsonResult AddNumber(int contactId, string number)
@@ -93,7 +89,6 @@ namespace PhoneBook.Controllers
             db.SaveChanges();
             return Json(null);
         }
-
         [HttpPost]
         public JsonResult AddNote(int contactId, string noteText)
         {
@@ -108,9 +103,30 @@ namespace PhoneBook.Controllers
         [HttpPost]
         public JsonResult Edit(Contact contact)
         {
-            //var contact = db.Contacts.Find(contactVM.Id);
-            //contact = MapperUtil.MapToContact(contactVM);
             db.Entry(contact).State = System.Data.Entity.EntityState.Modified;
+            db.SaveChanges();
+            return Json(null);
+        }
+        [HttpPost]
+        public JsonResult EditNumber(int contactId, string number, int numberElId)
+        {
+            var contact= db.Contacts.Find(contactId);
+            db.Entry(contact).Collection(x => x.PhoneNumber).Load();
+            PhoneNumber phoneNumber = contact.PhoneNumber.OrderBy(x => x.Id)
+                                                        .Skip(numberElId-1).FirstOrDefault();
+            phoneNumber.Number = number;
+            db.Entry(contact).State = System.Data.Entity.EntityState.Modified;
+            db.SaveChanges();
+            return Json(null);
+        }
+        [HttpPost]
+        public JsonResult EditNote(int contactId, string noteText, int numberElId)
+        {
+            var contact = db.Contacts.Find(contactId);
+            db.Entry(contact).Collection(x => x.Note).Load();
+            Note note = contact.Note.OrderBy(x => x.Id).Skip(numberElId - 1).FirstOrDefault();
+            note.NoteText = noteText;
+            db.Entry(note).State = System.Data.Entity.EntityState.Modified;
             db.SaveChanges();
             return Json(null);
         }
@@ -120,6 +136,33 @@ namespace PhoneBook.Controllers
         {
             var contact = db.Contacts.Find(id);
             db.Contacts.Remove(contact);
+            db.SaveChanges();
+            return Json(null);
+        }
+        [HttpPost]
+        public JsonResult DeleteNumber(int contactId, int numberElId)
+        {
+            var contact = db.Contacts.Find(contactId);
+            db.Entry(contact).Collection(x => x.PhoneNumber).Load();
+            PhoneNumber phoneNumber = contact.PhoneNumber.OrderBy(x => x.Id)
+                                                        .Skip(numberElId - 1).FirstOrDefault();
+            if(phoneNumber != null)
+            {
+                db.PhoneNumbers.Remove(phoneNumber);
+            }
+            db.SaveChanges();
+            return Json(null);
+        }
+        [HttpPost]
+        public JsonResult DeleteNote(int contactId, int numberElId)
+        {
+            Contact contact = db.Contacts.Find(contactId);
+            db.Entry(contact).Collection(x => x.Note).Load();
+            Note note = contact.Note.OrderBy(x => x.Id).Skip(numberElId - 1).FirstOrDefault();
+            if (note != null)
+            {
+                db.Notes.Remove(note);
+            }
             db.SaveChanges();
             return Json(null);
         }
