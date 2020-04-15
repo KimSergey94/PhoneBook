@@ -120,6 +120,66 @@
                 element.parentNode.removeChild(element);
                 element2.parentNode.removeChild(element2);
             };
+
+            $scope.deleteNote = function (noteElId) {
+                var element = document.getElementById('noteEl' + noteElId);
+                var element2 = document.getElementById('deleteNote' + noteElId);
+                var notesNum = document.getElementById('notesNum');
+                var noteDiv = document.getElementById('noteDiv');
+                var brs = noteDiv.querySelectorAll('br');
+                var noteElements = document.getElementsByClassName('noteEl').length;
+                var inpElementsToUpdate = [];
+                var delElementsToUpdate = [];
+                notesNum.value = (parseInt(notesNum.value, 10)) - 1;
+
+                for (var i = (noteElId + 1); i < noteElements + 1; i++) {
+                    var inpEl = document.getElementById('noteEl' + i);
+                    var delEl = document.getElementById('deleteNote' + i);
+                    var input = document.createElement("input");
+                    var a = document.createElement("a");
+                    var link = document.createTextNode("delete");
+
+                    if (inpEl.classList.contains('Add')) {
+                        input.className = "form-control noteEl Add";
+                    } else {
+                        input.className = "form-control noteEl";
+                    }
+
+                    input.style = "display:inline-block";
+                    input.id = "noteEl" + (i - 1);
+                    input.value = inpEl.value;
+                    a.appendChild(link);
+                    a.id = 'deleteNote' + (i - 1);
+                    a.href = "";
+                    a.setAttribute("ng-click", "deleteNote(" + (i - 1) + ")");
+                    inpEl.parentNode.removeChild(inpEl);
+                    delEl.parentNode.removeChild(delEl);
+                    inpElementsToUpdate.push(input);
+                    delElementsToUpdate.push(a);
+                }
+                for (var counter = 0; counter < noteElements - noteElId + 2; counter++) {
+                    var br = brs.length && brs[counter + noteElId - 1];
+                    if (br) {
+                        br.parentNode.removeChild(br);
+                    }
+                }
+
+                for (var count = 0; count < delElementsToUpdate.length; count++) {
+                    var br = document.createElement("br");
+                    noteDiv.appendChild(inpElementsToUpdate[count]);
+                    noteDiv.appendChild(delElementsToUpdate[count]);
+                    noteDiv.appendChild(br);
+
+                    angular.element(document).injector().invoke(function ($compile) {
+                        var scope = angular.element(inpElementsToUpdate[count]).scope();
+                        var scope2 = angular.element(inpElementsToUpdate[count]).scope();
+                        $compile(inpElementsToUpdate[count])(scope);
+                        $compile(delElementsToUpdate[count])(scope2);
+                    });
+                }
+                element.parentNode.removeChild(element);
+                element2.parentNode.removeChild(element2);
+            };
         }])
         .controller('editContactCtrl', ['$scope', '$routeParams', '$location', 'dataService',
             function ($scope, $routeParams, $location, dataService) {
@@ -128,43 +188,64 @@
                 dataService.getContactById($routeParams.id).then(function (result) {
                     $scope.contact = result;
                     document.getElementById('contactId').value = $routeParams.id;
+
+                    dataService.getNotes($routeParams.id).then(function (result) {
+                        $scope.notes = result;
+                        var notesNum = document.getElementById('notesNum');
+                        notesNum.value = $scope.notes.length;
+                        for (var i = 1; i < $scope.notes.length + 1; i++) {
+                            addNoteFields(i)
+                        }
+                    });
+                    dataService.getNumbers($routeParams.id).then(function (result) {
+                        $scope.numbers = result;
+                        var numbersNum = document.getElementById('numbersNum');
+                        numbersNum.value = $scope.numbers.length;
+                        for (var i = 1; i < $scope.numbers.length + 1; i++) {
+                            addNumberFields(i)
+                        }
+                    });
+
                 }, function () {
                     toastr.error('Error in fetching the contact with Id = ' + $routeParams.id);
                 });
 
-                dataService.getNotes($routeParams.id).then(function (result) {
-                    $scope.notes = result;
-                    var notesNum = document.getElementById('notesNum');
-                    notesNum.value = $scope.notes.length;
-                    for (var i = 1; i < $scope.notes.length + 1; i++) {
-                        var node = document.createElement("input");
-                        node.className = "form-control noteEl";
-                        node.id = "noteEl" + i;
-                        document.getElementById('noteDiv').appendChild(node);
-                        node.value = $scope.notes[i - 1];
-                    }
-                });
-                dataService.getNumbers($routeParams.id).then(function (result) {
-                    $scope.numbers = result;
-                    var numbersNum = document.getElementById('numbersNum');
-                    numbersNum.value = $scope.numbers.length;
-                    for (var i = 1; i < $scope.numbers.length + 1; i++) {
-                        addNumberFields(i)
-                    }
-                });
+
+                function addNoteFields(i) {
+                    var node = document.createElement("input");
+                    var noteDiv = document.getElementById('noteDiv');
+                    var br = document.createElement("br");
+                    var a = document.createElement("a");
+                    var link = document.createTextNode("delete");
+                    node.className = "form-control noteEl";
+                    node.style = "display:inline-block";
+                    node.id = "noteEl" + i;
+                    noteDiv.appendChild(node);
+                    node.value = $scope.notes[i - 1];
+                    a.appendChild(link);
+                    a.id = "deleteNote" + i;
+                    a.href = "";
+                    a.setAttribute("ng-click", "deleteNote(" + document.getElementById('contactId').value + " ," + i + ")");
+                    noteDiv.appendChild(a);
+                    noteDiv.appendChild(br);
+
+                    angular.element(document).injector().invoke(function ($compile) {
+                        var scope = angular.element(a).scope();
+                        $compile(a)(scope);
+                    });
+                }
+
                 function addNumberFields(i) {
                     var node = document.createElement("input");
-                    var numberDiv = document.getElementById('numberDiv');//
-                    var br = document.createElement("br");//
-                    var a = document.createElement("a");//
-                    var link = document.createTextNode("delete");//
-
+                    var numberDiv = document.getElementById('numberDiv');
+                    var br = document.createElement("br");
+                    var a = document.createElement("a");
+                    var link = document.createTextNode("delete");
                     node.className = "form-control numberEl";
-                    node.style = "display:inline-block";//
+                    node.style = "display:inline-block";
                     node.id = "numberEl" + i;
                     numberDiv.appendChild(node);
                     node.value = $scope.numbers[i - 1];
-
                     a.appendChild(link);
                     a.id = "delete" + i;
                     a.href = "";
@@ -288,12 +369,67 @@
                 };
 
                 $scope.deleteNote = function (contactId, noteElId) {
-                    dataService.deleteNote(contactId, noteElId).then(function () {
-                        document.getElementById('noteEl4').parentNode.removeChild(element);
-                        toastr.success('Note is deleted successfully.');
-                    }, function () {
-                            toastr.error('Error in deleting the note with the Id = ' + noteElId);
-                    });
+                    var element = document.getElementById('noteEl' + noteElId);
+                    if (!element.classList.contains('Add')) {
+                        dataService.deleteNote(contactId, noteElId);
+                    }
+
+                    var element2 = document.getElementById('deleteNote' + noteElId);
+                    var notesNum = document.getElementById('notesNum');
+                    var noteDiv = document.getElementById('noteDiv');
+                    var brs = noteDiv.querySelectorAll('br');
+                    var noteElements = document.getElementsByClassName('noteEl').length;
+                    var inpElementsToUpdate = [];
+                    var delElementsToUpdate = [];
+                    notesNum.value = (parseInt(notesNum.value, 10)) - 1;
+
+                    for (var i = (noteElId + 1); i < noteElements + 1; i++) {
+                        var inpEl = document.getElementById('noteEl' + i);
+                        var delEl = document.getElementById('deleteNote' + i);
+                        var input = document.createElement("input");
+                        var a = document.createElement("a");
+                        var link = document.createTextNode("delete");
+
+                        if (inpEl.classList.contains('Add')) {
+                            input.className = "form-control noteEl Add";
+                        } else {
+                            input.className = "form-control noteEl";
+                        }
+
+                        input.style = "display:inline-block";
+                        input.id = "noteEl" + (i - 1);
+                        input.value = inpEl.value;
+                        a.appendChild(link);
+                        a.id = 'deleteNote' + (i - 1);
+                        a.href = "";
+                        a.setAttribute("ng-click", "deleteNote(" + contactId + "," + (i - 1) + ")");
+                        inpEl.parentNode.removeChild(inpEl);
+                        delEl.parentNode.removeChild(delEl);
+                        inpElementsToUpdate.push(input);
+                        delElementsToUpdate.push(a);
+                    }
+                    for (var counter = 0; counter < noteElements - noteElId + 1; counter++) {
+                        var br = brs.length && brs[counter + noteElId - 1];
+                        if (br) {
+                            br.parentNode.removeChild(br);
+                        }
+                    }
+
+                    for (var count = 0; count < delElementsToUpdate.length; count++) {
+                        var br = document.createElement("br");
+                        noteDiv.appendChild(inpElementsToUpdate[count]);
+                        noteDiv.appendChild(delElementsToUpdate[count]);
+                        noteDiv.appendChild(br);
+
+                        angular.element(document).injector().invoke(function ($compile) {
+                            var scope = angular.element(inpElementsToUpdate[count]).scope();
+                            var scope2 = angular.element(inpElementsToUpdate[count]).scope();
+                            $compile(inpElementsToUpdate[count])(scope);
+                            $compile(delElementsToUpdate[count])(scope2);
+                        });
+                    }
+                    element.parentNode.removeChild(element);
+                    element2.parentNode.removeChild(element2);
                 };
             }]);
 })();

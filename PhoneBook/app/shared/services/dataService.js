@@ -12,10 +12,9 @@
                     deferred.resolve(result.data);
                 }, function () {
                     deferred.reject();
-                    });
+                });
                 return deferred.promise;
             };
-
             service.getContactById = function (id) {
                 var deferred = $q.defer();
                 $http.get('/PhoneBook/Details/' + id).then(function (result) {
@@ -55,9 +54,22 @@
                 node.style = "display:inline-block";
                 node.id = "noteEl" + notesNum.value;
                 noteDiv.appendChild(node);
+                a.appendChild(link);
+                a.id = "deleteNote" + notesNum.value;
+                a.href = "";
+                if (document.getElementById('contactId') && document.getElementById('contactId').value) {
+                    a.setAttribute("ng-click", "deleteNote(" + document.getElementById('contactId').value + " ," + notesNum.value + ")");
+                } else {
+                    a.setAttribute("ng-click", "deleteNote(" + notesNum.value + ")");
+                }
+                noteDiv.appendChild(a);
+                noteDiv.appendChild(br);
 
+                angular.element(document).injector().invoke(function ($compile) {
+                    var scope = angular.element(a).scope();
+                    $compile(a)(scope);
+                });
             };
-
             service.addNumberField = function () {
                 var node = document.createElement("input");
                 var numbersNum = document.getElementById('numbersNum');
@@ -86,7 +98,6 @@
                     $compile(a)(scope);
                 });
             };
-            
             service.addNumber = function (contactId, number) {
                 var deferred = $q.defer();
                 $http.post('PhoneBook/AddNumber/', JSON.stringify({
@@ -111,7 +122,6 @@
                 });
                 return deferred.promise;
             };
-
             service.addContact = function (contact) {
                 var deferred = $q.defer();
                 $http.post('PhoneBook/Create', contact).then(function (result) {
@@ -121,7 +131,6 @@
                 });
                 return deferred.promise;
             };
-
             service.editContact = function (contact) {
                 var deferred = $q.defer();
                 $http.post('PhoneBook/Edit', contact).then(function () {
@@ -157,7 +166,6 @@
                 });
                 return deferred.promise;
             };
-
             service.deleteContact = function (id) {
                 var deferred = $q.defer();
                 $http.post('PhoneBook/Delete/' + id, { id: id }).then(function () {

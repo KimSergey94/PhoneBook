@@ -135,6 +135,8 @@ namespace PhoneBook.Controllers
         public JsonResult Delete(int id)
         {
             var contact = db.Contacts.Find(id);
+            db.Entry(contact).Collection(x => x.PhoneNumber).Load();
+            db.Entry(contact).Collection(x => x.Note).Load();
             db.Contacts.Remove(contact);
             db.SaveChanges();
             return Json(null);
@@ -154,11 +156,11 @@ namespace PhoneBook.Controllers
             return Json(null);
         }
         [HttpPost]
-        public JsonResult DeleteNote(int contactId, int numberElId)
+        public JsonResult DeleteNote(int contactId, int noteElId)
         {
             Contact contact = db.Contacts.Find(contactId);
             db.Entry(contact).Collection(x => x.Note).Load();
-            Note note = contact.Note.OrderBy(x => x.Id).Skip(numberElId - 1).FirstOrDefault();
+            Note note = contact.Note.OrderBy(x => x.Id).Skip(noteElId - 1).FirstOrDefault();
             if (note != null)
             {
                 db.Notes.Remove(note);
